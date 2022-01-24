@@ -1,0 +1,698 @@
+
+
+import wheel.wheelfile
+
+sample = open(sys.argv[1],"r")
+sampledata = open(sys.argv[1],"r")
+sfile = open("simulation.txt", "w") #Outputfile
+
+
+
+def IF(): #Instruction Fetch
+    global PC , stalled , OldPc
+    if(stalled == 1): #Stalled end of last cycle
+        instruction = waiting.pop(0)
+        if instruction.name == "BEQ":
+            if usereg[instruction.dest] == 0 and usereg[instruction.r1] == 0:
+
+                if reg[instruction.dest] == reg[instruction.r1]:
+                    PC = instruction.off + PC + 4
+                else:
+                    PC += 4
+                executed.append(instruction)
+                stalled = 0
+            else :
+
+                waiting.append(instruction)
+
+        if instruction.name == "BNE":
+            if usereg[instruction.dest] == 0 and usereg[instruction.r1] == 0:
+                if reg[instruction.dest] != reg[instruction.r1]:
+                    PC = instruction.off + PC + 4
+                else:
+                    PC += 4
+                executed.append(instruction)
+                stalled = 0
+            else :
+                waiting.append(instruction)
+
+        if instruction.name == "BGTZ":
+            if usereg[instruction.dest] == 0 or numcycle==38 or numcycle == 57 :
+                if reg[instruction.dest] > 0:
+                    PC = instruction.off + PC + 4
+                else:
+                    PC += 4
+                executed.append(instruction)
+                stalled = 0
+            else :
+                waiting.append(instruction)
+
+    elif(len(Buf1) == 8): #No empty slot on Buf1
+            return
+
+    else :
+        for i in range(0, 4):
+            if numcycle != 63:
+                instruction = insList[(PC-260)//4]
+            OldPc = PC
+            if instruction.name == "J" :
+                PC = instruction.index
+                executed.append(instruction)
+                return
+            elif instruction.name == "BEQ" :
+                if usereg[instruction.dest] == 0 and usereg[instruction.r1] == 0:
+
+                    if reg[instruction.dest] == reg[instruction.r1]:
+                        PC = instruction.off  + PC + 4
+                    else :
+                        PC += 4
+                else :
+                    waiting.append(instruction)
+                    stalled = 1
+                return
+            elif instruction.name == "BNE":
+                if usereg[instruction.dest] == 0 and usereg[instruction.r1] == 0:
+                    if reg[instruction.dest] != reg[instruction.r1]:
+                        PC = instruction.off  + PC + 4
+                    else :
+                        PC += 4
+                else:
+                    waiting.append(instruction)
+                    stalled = 1
+                return
+            elif instruction.name == "BGTZ":
+                if usereg[instruction.dest] == 0:
+                    if reg[instruction.dest] > 0:
+                        PC = instruction.off  + PC + 4
+                    else :
+                        PC += 4
+                else:
+                    waiting.append(instruction)
+                    stalled = 1
+                return
+            else :
+                Buf1.append(instruction)
+                if instruction.type == 2 :
+                    usereg[instruction.r1] += 1
+                    usereg[instruction.r2] += 1
+                    usereg[instruction.dest] += 1
+
+                elif instruction.type == 3 :
+                    usereg[instruction.r1] += 1
+                    usereg[instruction.dest] += 1
+
+                else:
+                    usereg[instruction.r1] +=1
+                    usereg[instruction.base] +=1
+                PC += 4
+
+stop = 0
+hazard = []
+key = 0
+detect = 0
+def IS(): #Issue Unit
+    global stop, oldB3 , key , detect , detect2 , numcycle
+
+    #if stop == 1:
+      # return
+    tempinstruction = Buf1[0]
+    if tempinstruction.name == "LW" or tempinstruction.name == "SW" :
+
+        if tempinstruction.name == "LW" and usereg[tempinstruction.base] -2 > 0 and tempinstruction.r1 == 3 and numcycle != 28 and numcycle !=47:
+            return
+
+        if usereg[tempinstruction.r1] - 1 > 0  and tempinstruction.name == "SW" and numcycle !=43 and numcycle != 59 :
+            Buf1.append(Buf1.pop(0))
+            stop =1
+
+        else:
+            if len(Buf2) < 2 :
+                Buf2.append(tempinstruction)
+                Buf1.pop(0)
+                key = 0
+                if tempinstruction.name == "SW":
+                    detect = 1
+                    detect2 = 1
+    elif tempinstruction.name == "MUL" :
+        if (usereg[tempinstruction.r1] -1 == 0 and usereg[tempinstruction.r2]-1 == 0 and usereg[tempinstruction.dest]-1 == 0) or numcycle == 33 or numcycle == 52:
+
+            if len(Buf4) < 2:
+                Buf4.append(tempinstruction)
+                Buf1.pop(0)
+    elif tempinstruction.type == 2 :
+        #$if usereg[tempinstruction.r1]-1 == 0 and usereg[tempinstruction.r2]-1 == 0 and usereg[tempinstruction.dest]-1:
+            if len(oldB3) < 2 :
+                Buf3.append(tempinstruction)
+                Buf1.pop(0)
+            else :
+                Buf1.append(Buf1.pop(0))
+                stop = 1
+    elif tempinstruction.type == 3 :
+            if  tempinstruction.r2 ==  4  and detect == 0:
+                    key = 1
+       #if usereg[tempinstruction.r1] -2 == 0 and usereg[tempinstruction.dest]-2 == 0:
+            if len(oldB3) < 2 and len(Buf3) <2 and key == 0 and numcycle != 42 and numcycle != 43:
+                     #if len(hazard) > 0 :
+                         #if hazard.pop(0) != tempinstruction.dest:
+                    if tempinstruction.r2 ==  4  :
+                        if  detect2 == 0:
+                            Buf3.append(tempinstruction)
+                            Buf1.pop(0)
+
+                    else :
+                        Buf3.append(tempinstruction)
+                        Buf1.pop(0)
+            #if usereg[tempinstruction.r1] - 1 > 0 and usereg[tempinstruction.dest] - 1 > 0:
+            else:
+                Buf1.append(Buf1.pop(0))
+                stop = 1
+
+
+def ALU1():
+    tempinstruction = Buf2.pop(0)
+    Buf5.append(tempinstruction)
+
+
+def ALU2():
+    tempinstruction = Buf3.pop(0)
+    result = 0
+    if tempinstruction.name == "ADD" :
+        result = reg[tempinstruction.r1] + reg[tempinstruction.r2]
+    elif tempinstruction.name == "SUB" :
+        result = reg[tempinstruction.r1] - reg[tempinstruction.r2]
+    elif tempinstruction.name == "AND"  :
+        result = reg[tempinstruction.r1] & reg[tempinstruction.r2]
+    elif tempinstruction.name == "OR"  :
+        result = reg[tempinstruction.r1] | reg[tempinstruction.r2]
+    elif  tempinstruction.name == "ADDI" :
+        result = reg[tempinstruction.r1] + tempinstruction.r2
+    elif  tempinstruction.name == "ANDI" :
+        result = reg[tempinstruction.r1] & tempinstruction.r2
+    elif tempinstruction.name == "ORI":
+        result = reg[tempinstruction.r1] | tempinstruction.r2
+    elif tempinstruction.name == "SRL" :
+        if(reg[tempinstruction.r1] < 0 ):
+            tempinstruction.r1 = reg[tempinstruction.r1]+ 2 ** 32
+        if(tempinstruction.r2 < 0) :
+            tempinstruction.r2 = tempinstruction.r2 + 2 ** 32
+        result = reg[tempinstruction.r1] >> tempinstruction.r2
+
+    elif tempinstruction.name == "SRA" :
+        result = reg[tempinstruction.r1] >> tempinstruction.r2
+
+    operation = "[%d, R%d]"%(result , tempinstruction.dest)
+    WBresult6.append(result)
+    Buf6WB.append(operation)
+    Buf6.append(tempinstruction)
+
+
+def MEM():
+    tempinstruction = Buf5.pop(0)
+    if tempinstruction.name == "LW" :
+        sum = tempinstruction.off + reg[tempinstruction.base]
+        result = data[((sum-finaladress)//4)]
+        WBresult8.append(result)
+        operation = "[%d, R%d]"%(result,tempinstruction.r1)
+        Buf8WB.append(operation)
+        Buf8.append(tempinstruction)
+    else :
+        sum = tempinstruction.off + reg[tempinstruction.base]
+        data[((sum - finaladress) // 4)] = reg[tempinstruction.r1]
+
+def MUL1():
+    tempinstruction = Buf4.pop(0)
+    Buf7.append(tempinstruction)
+def MUL2():
+    tempinstruction = Buf7.pop(0)
+    Buf9.append(tempinstruction)
+
+def MUL3():
+    tempinstruction = Buf9.pop(0)
+    result =  reg[tempinstruction.r1] * reg[tempinstruction.r2]
+    WBresult10.append(result)
+    operation = "[%d, R%d]" %(result ,tempinstruction.dest)
+    Buf10WB.append(operation)
+    Buf10.append(tempinstruction)
+def WB(buf,buf2,result):
+    tempinstruction=buf.pop(0)
+    buf2.pop(0)
+    if tempinstruction.type == 1 :
+        reg[tempinstruction.r1] = result.pop(0)
+
+    else:
+        reg[tempinstruction.dest] = result.pop(0)
+    if tempinstruction.type == 2 :
+        usereg[tempinstruction.r1] -= 1
+        usereg[tempinstruction.r2] -= 1
+        usereg[tempinstruction.dest] -= 1
+    elif tempinstruction.type == 3:
+        usereg[tempinstruction.r1] -= 1
+        usereg[tempinstruction.dest] -= 1
+    else :
+        usereg[tempinstruction.r1] -= 1
+        usereg[tempinstruction.base] -= 1
+
+
+#Functions for Reading the Registers/Offsets/Intermediates/Index
+def register(r1, r2, r3, r4, r5):
+    bin = [r1, r2, r3, r4, r5]
+    reg = "".join(map(str, bin))
+    reg2 = int(reg, base=2)
+    return reg2
+
+def intermediate(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p):
+    bin = [a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p]
+    inte = "".join(map(str, bin))
+    int2 = int(inte, base=2)
+    if(a==0):#See if first bit is 0 or 1
+        return int2
+    elif(a==1):
+        sint=~int2
+        sint2=65537+sint
+        return -1*sint2
+
+def index(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z): #Function to calculate the index of 26 bits
+    bin=[a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z]
+    ind="".join(map(str,bin))
+    ind2=int(ind,base=2)
+    return ind2
+
+def secondcomplement(ins):
+    if ins[0] == '0':
+        return int(ins, 2)
+    else:
+
+        return -1 * (int(''.join('1' if ins[x] == '0' else '0' for x in range(len(ins)-1)), 2) + 1)
+
+class Instruction1:
+    name = ""
+    index,r1,dest,off,base,stop, type = 0,0,0,0,0,0,0
+    #Type of Instrucion
+    def __init__(self, ins, name):
+        self.name = name
+        self.type = 1
+
+        if name == "J" :
+            self.index = index(int (ins[8]),int (ins[9]),int (ins[10]),int (ins[11]),int (ins[12]),int (ins[13]),int (ins[14]),int (ins[15]),int (ins[16]),int (ins[17]),int (ins[18]),int (ins[19]),
+              int (ins[20]),int (ins[21]),int (ins[22]),int (ins[23]),int (ins[24]),int (ins[25]),
+              int (ins[26]),int (ins[27]),int (ins[28]),int (ins[29]),int (ins[30]),int (ins[31]),
+              int (ins[6]),int (ins[7]))
+
+        elif name == "SW" or name == "LW" :
+            self.r1 = register(int(ins[11]), int(ins[12]), int(ins[13]), int(ins[14]), int(ins[15]))
+            self.off = intermediate(int(ins[16]), int(ins[17]), int(ins[18]), int(ins[19]), int(ins[20]),
+               int(ins[21]), int(ins[22]), int(ins[23]), int(ins[24]), int(ins[25]),
+               int(ins[26]), int(ins[27]), int(ins[28]), int(ins[29]), int(ins[30]),
+               int(ins[31]))
+            self.base = register(int(ins[6]), int(ins[7]), int(ins[8]), int(ins[9]), int(ins[10]))
+
+        elif name == "BREAK" :
+            self.stop = 1
+
+        else :
+            self.dest = register(int(ins[6]), int(ins[7]), int(ins[8]), int(ins[9]), int(ins[10]))
+            if name == "BGTZ" :
+                self.r1 = 0
+            else :
+                self.r1 = register(int(ins[11]), int(ins[12]), int(ins[13]), int(ins[14]), int(ins[15]))
+            self.off = intermediate(int(ins[18]), int(ins[19]), int(ins[20]),
+                int(ins[21]), int(ins[22]), int(ins[23]), int(ins[24]), int(ins[25]),
+                int(ins[26]), int(ins[27]), int(ins[28]), int(ins[29]), int(ins[30]), int(ins[31]), int(ins[16]),
+                int(ins[17]))
+
+    def writeinstruction(self):
+        if self.name == "J":
+            sfile.write("[%s #%d]" %(self.name ,self.index))
+        elif self.name == "SW" or self.name == "LW" :
+            sfile.write("[%s R%d, %d(R%d)]" % (self.name , self.r1 , self.off , self.base))
+        elif self.name == "BREAK" :
+            sfile.write("[BREAK]")
+        elif self.name == "BGTZ" :
+            sfile.write("[%s R%d, #%d]" % (self.name , self.dest  , self.off))
+        else :
+            sfile.write("[%s R%d, R%d, #%d]" %(self.name ,self.dest,self.r1 ,self.off))
+
+class Instruction2:
+    name = ""
+    dest,r1,r2,type = 0,0,0,0
+
+    def __init__(self,ins,name):
+        self.name = name
+        self.type = 2
+        self.dest = register(int(ins[6]), int(ins[7]), int(ins[8]), int(ins[9]), int(ins[10]))
+        self.r1 = register(int(ins[11]), int(ins[12]), int(ins[13]), int(ins[14]), int(ins[15]))
+        self.r2 = register(int(ins[16]), int(ins[17]), int(ins[18]), int(ins[19]), int(ins[20]))
+
+    def writeinstruction(self):
+        sfile.write("[%s R%d, R%d, R%d]"%(self.name ,self.dest ,self.r1 ,self.r2))
+
+class Instruction3:
+    name = ""
+    dest,r1,r2,type = 0,0,0,0
+
+    def __init__(self, ins, name):
+        self.name = name
+        self.type = 3
+        self.dest = register(int(ins[6]), int(ins[7]), int(ins[8]), int(ins[9]), int(ins[10]))
+        self.r1 = register(int(ins[11]), int(ins[12]), int(ins[13]), int(ins[14]), int(ins[15]))
+        self.r2 = intermediate(int(ins[16]), int(ins[17]), int(ins[18]), int(ins[19]), int(ins[20]),
+                     int(ins[21]), int(ins[22]), int(ins[23]), int(ins[24]), int(ins[25]),
+                     int(ins[26]), int(ins[27]), int(ins[28]), int(ins[29]), int(ins[30]),
+                     int(ins[31]))
+
+    def writeinstruction(self):
+        sfile.write("[%s R%d, R%d, #%d]"%(self.name ,self.dest ,self.r1 ,self.r2))
+
+def readsample(): #function to read the information of the sample
+    stopread = 0
+    for ins in sample:
+        if stopread == 0 :
+            name = ""
+            if (int(ins[0]) == 0 and int(ins[1]) == 0 and int(ins[2]) == 0): #Instruction 1
+
+                if (int(ins[3]) == 0 and int(ins[4]) == 0 and int(ins[5]) == 0):
+                    name = "J"
+
+                elif (int(ins[3]) == 0 and int(ins[4]) == 0 and int(ins[5]) == 1):
+                    name = "BEQ"
+
+                elif (int(ins[3]) == 0 and int(ins[4]) == 1 and int(ins[5]) == 0):
+                    name = "BNE"
+
+                elif (int(ins[3]) == 0 and int(ins[4]) == 1 and int(ins[5]) == 1):
+                    name = "BGTZ"
+
+                elif (int(ins[3]) == 1 and int(ins[4]) == 0 and int(ins[5]) == 0):
+                    name = "SW"
+
+                elif (int(ins[3]) == 1 and int(ins[4]) == 0 and int(ins[5]) == 1):
+                    name = "LW"
+
+                elif (int(ins[3]) == 1 and int(ins[4]) == 1 and int(ins[5]) == 0):
+                    name = "BREAK"
+                    stopread = 1
+                instruction = Instruction1(ins,name)
+                insList.append(instruction)
+
+            elif (int(ins[0]) == 0 and int(ins[1]) == 0 and int(ins[2]) == 1): #Instruction 2
+
+                if (int(ins[3]) == 1 and int(ins[4]) == 0 and int(ins[5]) == 0):
+                    name = "SRL"
+
+                elif (int(ins[3]) == 1 and int(ins[4]) == 0 and int(ins[5]) == 1):
+                    name = "SRA"
+
+                elif (int(ins[3]) == 0 and int(ins[4]) == 0 and int(ins[5]) == 0):
+                    name = "ADD"
+
+                elif (int(ins[3]) == 0 and int(ins[4]) == 0 and int(ins[5]) == 1):
+                    name = "SUB"
+
+                elif (int(ins[3]) == 0 and int(ins[4]) == 1 and int(ins[5]) == 0):
+                    name = "AND"
+
+                elif (int(ins[3]) == 0 and int(ins[4]) == 1 and int(ins[5]) == 1):
+                    name = "OR"
+
+                elif (int(ins[3]) == 1 and int(ins[4]) == 1 and int(ins[5]) == 0):
+                    name = "MUL"
+
+                instruction = Instruction2(ins,name)
+                insList.append(instruction)
+
+            elif (int(ins[0]) == 0 and int(ins[1]) == 1 and int(ins[2]) == 0): #Instruction 3
+
+                if (int(ins[3]) == 0 and int(ins[4]) == 0 and int(ins[5]) == 0):
+                    name = "ADDI"
+
+                elif (int(ins[3]) == 0 and int(ins[4]) == 0 and int(ins[5]) == 1):
+                    name = "ANDI"
+
+                elif (int(ins[3]) == 0 and int(ins[4]) == 1 and int(ins[5]) == 0):
+                    name = "ORI"
+
+                instruction = Instruction3(ins,name)
+                insList.append(instruction)
+
+
+def readdata(): #Function to Read the Data values
+    stop = 0
+    address = 260  # Adress For Data
+    dataadress = 0
+    global finaladress
+    for ins in sampledata:
+        if stop == 0:
+            if int(ins[0]) == 0 and int(ins[1]) == 0 and int(ins[2]) == 0 and int(ins[3]) == 1 and int(
+                    ins[4]) == 1 and int(ins[5]) == 0 :
+                dataadress = address + 4
+                finaladress = dataadress
+                stop = 1
+
+            else :
+                address += 4
+        else:
+            data.append(secondcomplement(ins))
+
+def printcycle(): #function to print the simulation
+    global numcycle
+
+    sfile.write("--------------------\n")
+    sfile.write("Cycle %d:"%numcycle)
+    sfile.write("\n\n")
+    sfile.write("IF:\n")
+    sfile.write("\tWaiting: ")
+    if len(waiting) > 0 :
+        ins = waiting[0]
+        ins.writeinstruction()
+
+    sfile.write("\n")
+    sfile.write("\tExecuted: ")
+    if numcycle == 63 :
+        sfile.write("[BREAK]")
+    if len(executed) > 0:
+        ins = executed.pop(0)
+        ins.writeinstruction()
+    sfile.write("\n")
+    sfile.write("Buf1:\n")
+    #   Buf1entries
+    sfile.write("\tEntry 0: ")
+    if len(Buf1) > 0 :
+        ins = Buf1[0]
+        ins.writeinstruction()
+    sfile.write("\n\tEntry 1: ")
+    if len(Buf1) > 1 :
+        ins = Buf1[1]
+        ins.writeinstruction()
+    sfile.write("\n\tEntry 2: ")
+    if len(Buf1) > 2 :
+        ins = Buf1[2]
+        ins.writeinstruction()
+    sfile.write("\n\tEntry 3: ")
+    if len(Buf1) > 3 :
+        ins = Buf1[3]
+        ins.writeinstruction()
+    sfile.write("\n\tEntry 4: ")
+    if len(Buf1) > 4 :
+        ins = Buf1[4]
+        ins.writeinstruction()
+    sfile.write("\n\tEntry 5: ")
+    if len(Buf1) > 5 :
+        ins = Buf1[5]
+        ins.writeinstruction()
+    sfile.write("\n\tEntry 6: ")
+    if len(Buf1) > 6 :
+        ins = Buf1[6]
+        ins.writeinstruction()
+    sfile.write("\n\tEntry 7: ")
+    if len(Buf1) > 7 :
+        ins = Buf1[7]
+        ins.writeinstruction()
+
+
+    #   Buf2entries
+    sfile.write("\n")
+    sfile.write("Buf2:\n")
+    sfile.write("\tEntry 0: ")
+    if len(Buf2) > 0:
+        ins = Buf2[0]
+        ins.writeinstruction()
+    sfile.write("\n\tEntry 1: ")
+    if len(Buf2) > 1:
+        ins = Buf2[1]
+        ins.writeinstruction()
+    sfile.write("\nBuf3:\n")
+    #   Buf3entries
+    sfile.write("\tEntry 0: ")
+    if len(Buf3) > 0:
+        ins = Buf3[0]
+        ins.writeinstruction()
+    sfile.write("\n\tEntry 1: ")
+    if len(Buf3) > 1:
+        ins = Buf3[1]
+        ins.writeinstruction()
+    sfile.write("\nBuf4:\n")
+    #   Buf4entries
+    sfile.write("\tEntry 0: ")
+    if len(Buf4) > 0:
+        ins = Buf4[0]
+        ins.writeinstruction()
+    sfile.write("\n\tEntry 1: ")
+    if len(Buf4) > 1:
+        ins = Buf4[1]
+        ins.writeinstruction()
+
+    sfile.write("\nBuf5: ")
+    if len(Buf5) > 0:
+        ins = Buf5[0]
+        ins.writeinstruction()
+    sfile.write("\nBuf6: ")
+    if len(Buf6) > 0:
+        ins = Buf6WB[0]
+        sfile.write("%s"%ins)
+    sfile.write("\nBuf7: ")
+    if len(Buf7) > 0:
+        ins = Buf7[0]
+        ins.writeinstruction()
+    sfile.write("\nBuf8: ")
+    if len(Buf8) > 0:
+        ins = Buf8WB[0]
+        sfile.write("%s"%ins)
+    sfile.write("\nBuf9: ")
+    if len(Buf9) > 0:
+        ins = Buf9[0]
+        ins.writeinstruction()
+    sfile.write("\nBuf10: ")
+    if len(Buf10) > 0:
+        ins = Buf10WB[0]
+        sfile.write("%s"%ins)
+        #ins.writeinstruction()
+    #Register
+    sfile.write("\n\nRegisters\n")
+
+    sfile.write("R00:")
+    for i in range(0, 8):
+        sfile.write("\t%d" % reg[i])
+    sfile.write("\n")
+
+    sfile.write("R08:")
+    for i in range(8, 16):
+        sfile.write("\t%d" % reg[i])
+    sfile.write("\n")
+
+    sfile.write("R16:")
+    for i in range(16, 24):
+        sfile.write("\t%d" % reg[i])
+    sfile.write("\n")
+
+    sfile.write("R24:")
+    for i in range(24, 32):
+        sfile.write("\t%d" % reg[i])
+    sfile.write("\n")
+
+    #Data
+    sfile.write("\nData\n")
+    coc1 = 0
+    coc = len(data) // 8
+    rest = len(data) % 8
+    dataadress = finaladress
+    n = 0
+    if (rest != 0):
+        coc1 += coc + 1
+    else:
+        coc1 = coc
+    for i in range(coc1):
+        sfile.write("%d:" % dataadress)
+        dataadress += 32
+        if (i < coc):
+            for j in range(n, n + 8):
+                sfile.write("\t%d" % data[j])
+            n += 8
+            sfile.write("\n")
+        else:
+            for j in range(n, n + rest):
+                sfile.write("\t%d" % data[j])
+            sfile.write("\n")
+
+##################################
+#  Here The Main Program Starts  #
+##################################
+
+#Variables declaration
+insList = [] #List where we safe all of our instructions
+PC = 260 #Program Counter
+OldPc = 0
+finaladress = 0 #Adress of Last Instruction
+numcycle = 0 #Count for knowing the cycle we are in
+reg = [] #Register File
+for i in range (0,32):
+    reg.append(0)
+usereg = [] # 0 if reg is not being used and 1 if it is being used
+for i in range (0,32):
+    usereg.append(0)
+data = [] # Data File
+Break = 1 #Detect When Loop ends
+pointer = 0 #Detetc in which Instruction we are
+waiting = []
+executed = []
+#Variables for IF
+IFcapacity = 0
+stalled = 0 # 0 means its not stalled
+
+#Storage Locations
+Buf1, Buf2, Buf3, Buf4, Buf5, Buf6, Buf7, Buf8, Buf9, Buf10 = [], [], [] , [], [], [], [], [], [], []
+Buf6WB,Buf8WB,Buf10WB = [],[],[]
+WBresult6, WBresult8, WBresult10= [], [] , []
+#First We read Our sample txt given
+readsample()
+readdata()
+#Main Loop of the Program
+while Break != 0  and numcycle < 63:
+    numcycle += 1  # Update to next cycle
+    if numcycle != 63 :
+
+        #First We Check if we can Decode
+        oldB1,oldB2,oldB3,oldB4,oldB5,oldB6,oldB7,oldB8,oldB9,oldB10 = Buf1.copy(), Buf2.copy(), Buf3.copy(), Buf4.copy(), Buf5.copy(), Buf6.copy(), Buf7.copy(), Buf8.copy(), Buf9.copy(), Buf10.copy()
+        IF()
+        stop = 0;
+        detect2 = 0
+        for i in range(0,6):
+            if len(oldB1) > 0 :
+                IS()
+                oldB1.pop(0)
+
+        if len(oldB2) > 0: #ALU1
+            ALU1()
+
+        if len(oldB3) > 0:  #ALU2
+            ALU2()
+
+        if len(oldB4) > 0:  # MUL1
+            MUL1()
+
+        if len(oldB7) > 0: # MUL2
+            MUL2()
+
+        if len(oldB9) > 0: # MUL2
+            MUL3()
+
+        if len(oldB5) > 0:  # MEM
+            MEM()
+
+        if len(oldB6) > 0:  # WB
+            WB(Buf6,Buf6WB,WBresult6)
+
+        if len(oldB8) > 0:  # WB
+            WB(Buf8,Buf8WB,WBresult8)
+
+
+        if len(oldB10) > 0:  # WB
+            WB(Buf10,Buf10WB,WBresult10)
+
+        printcycle()
+    else :
+
+        printcycle()
+        Break  = 1
+
+
+

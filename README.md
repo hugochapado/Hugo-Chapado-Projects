@@ -38,7 +38,20 @@ Twitter tool made using data structures to find out how close a specific person 
 ## C++
 Directory containing small C++ projects
 
+##Contact information
 
+EMAILS:
+  hchapadozetta@gmail.com
+  hugochapado@ufl.edu
+
+Phone Numbers:
+  +1 352 888 9626
+  +34 688 92 08 61
+ 
+ Linkedin:
+  www.linkedin.com/in/hugo-chapado-35575b228
+ 
+  
 ## About Me
 I am an Applied Mathematics and Computing 3rd year student at University Carlos III de Madrid. I am currently at University of Florida as an exchange student.
 

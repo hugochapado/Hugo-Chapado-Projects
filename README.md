@@ -3,7 +3,7 @@
 
 <!-- Projects -->
 <details open="open">
-  <summaryProjects</summary>
+  <summary>Projects</summary>
   <ol>
     <li><a href="#usage">Image Classifier</a></li>
     <li><a href="#roadmap">Minishell</a></li>
@@ -11,4 +11,4 @@
     <li><a href="#license">Twitter Analysis tool</a></li>
     <li><a href="#authors">C++</a></li>
   </ol>
-</Projects>
+</details>

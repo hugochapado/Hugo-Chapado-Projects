@@ -3,7 +3,7 @@
 
 <!-- Projects -->
 <details open="open">
-  <summary>Table of Contents</summary>
+  <summaryProjects</summary>
   <ol>
     <li><a href="#usage">Image Classifier</a></li>
     <li><a href="#roadmap">Minishell</a></li>

@@ -42,10 +42,12 @@ Directory containing small C++ projects
 
 EMAILS:
   hchapadozetta@gmail.com
+  
   hugochapado@ufl.edu
 
 Phone Numbers:
   +1 352 888 9626
+  
   +34 688 92 08 61
  
  Linkedin:

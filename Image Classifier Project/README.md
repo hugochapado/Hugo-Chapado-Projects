@@ -173,9 +173,11 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <!-- Authors -->
 ## Authors
 
-
 Hugo Chapado - hugochapado@ufl.edu
+ 
+Ignacio Gómez - igomezfernandez@ufl.edu
 
+Gonzalo Prats - g.prats@ufl.edu
 
 <!-- ACKNOWLEDGEMENTS -->
 ## Acknowledgements

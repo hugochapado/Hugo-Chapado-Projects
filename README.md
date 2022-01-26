@@ -15,10 +15,30 @@
 </details>
 
 ## Image Classifier
+Image Classifying Project which can classify images from 10 different classes with an accuracy of over 98.8%.
+This project includes a classifier built on RESNET50 and a classifier, built from scratch, which classifies images with an accuracy of over 76%
+
+
 ## Minishell
+Unix iteratctive interface with operating systems. 
+Designed and coded in C.
+Additional internal commands (mycalc & mycp).
+
+
 ## Mips Simulator
+Simulator for a pipelined processor capable of loading a specified
+MIPS text (0/1) file and generate the cycle-by-cycle simulation of the MIPS code
+and produce/print the contents of registers, queues, and memory data for each cycle.
+
+
 ## Twitter Analysis tool
+Twitter tool made using data structures to find out how close a specific person is to a public figure in social media to help Business with advertising.
+
+
 ## C++
+Directory containing small C++ projects
+
+
 ## About Me
 I am an Applied Mathematics and Computing 3rd year student at University Carlos III de Madrid. I am currently at University of Florida as an exchange student.
 

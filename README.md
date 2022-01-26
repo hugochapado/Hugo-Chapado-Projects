@@ -1,4 +1,3 @@
-# Hugo Chapado Cruz
-Collection of Projects
-<p align="center">
-![0f4b00fc1590087bca49fd939a262aa7](https://user-images.githubusercontent.com/89554893/151116425-08e10dd3-4bf2-4ea9-9621-b0240e9357d4.png)
+# Collection of Projects by:
+![23f6f2bb53a88d5da51f710bb42cf747](https://user-images.githubusercontent.com/89554893/151116570-dc97040d-d0c5-41d1-9342-c5e8de1f0a91.png)
+

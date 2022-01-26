@@ -6,7 +6,7 @@
 <details open="open">
   <summary>Projects</summary>
   <ol>
-    <li><a href="#usage">Image Classifier</a></li>
+    <li><a href="#image-classifier">Image Classifier</a></li>
     <li><a href="#roadmap">Minishell</a></li>
     <li><a href="#contributing">Mips Simulator</a></li>
     <li><a href="#license">Twitter Analysis tool</a></li>
@@ -14,7 +14,7 @@
   </ol>
 </details>
 
-##
+##Image Classifier
 ## About Me
 I am an Applied Mathematics and Computing 3rd year student at University Carlos III de Madrid. I am currently at University of Florida as an exchange student.
 

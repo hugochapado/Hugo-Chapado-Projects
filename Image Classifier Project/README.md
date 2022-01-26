@@ -173,15 +173,8 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <!-- Authors -->
 ## Authors
 
-Michael Baumgärtner - [@space_mib](https://twitter.com/space_mib) - mbaumgartner@ufl.edu
-
-Github Link: [https://github.com/Granluke](https://github.com/Granluke)
-
-Ignacio Gómez - igomezfernandez@ufl.edu
 
 Hugo Chapado - hugochapado@ufl.edu
-
-Gonzalo Prats - g.prats@ufl.edu
 
 
 <!-- ACKNOWLEDGEMENTS -->

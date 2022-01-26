@@ -14,7 +14,7 @@
   </ol>
 </details>
 
-##Image Classifier
+## Image Classifier
 ## About Me
 I am an Applied Mathematics and Computing 3rd year student at University Carlos III de Madrid. I am currently at University of Florida as an exchange student.
 

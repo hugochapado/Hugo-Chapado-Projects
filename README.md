@@ -11,4 +11,4 @@
     <li><a href="#license">Twitter Analysis tool</a></li>
     <li><a href="#authors">C++</a></li>
   </ol>
-</details>
+</Projects>

@@ -42,19 +42,19 @@ Directory containing small C++ projects
 
 EMAILS:
 
-/t hchapadozetta@gmail.com
+-->   hchapadozetta@gmail.com
   
-    hugochapado@ufl.edu
+-->   hugochapado@ufl.edu
 
 Phone Numbers:
 
-    +1 352 888 9626
+-->   +1 352 888 9626
   
-    +34 688 92 08 61
+-->   +34 688 92 08 61
  
  Linkedin:
  
-    www.linkedin.com/in/hugo-chapado-35575b228
+ -->   www.linkedin.com/in/hugo-chapado-35575b228
  
   
 ## About Me

@@ -7,14 +7,18 @@
   <summary>Projects</summary>
   <ol>
     <li><a href="#image-classifier">Image Classifier</a></li>
-    <li><a href="#roadmap">Minishell</a></li>
-    <li><a href="#contributing">Mips Simulator</a></li>
-    <li><a href="#license">Twitter Analysis tool</a></li>
-    <li><a href="#authors">C++</a></li>
+    <li><a href="#minishell">Minishell</a></li>
+    <li><a href="#mips-simulator">Mips Simulator</a></li>
+    <li><a href="#twitter-analysis-tool">Twitter Analysis tool</a></li>
+    <li><a href="#c++">C++</a></li>
   </ol>
 </details>
 
 ## Image Classifier
+## Minishell
+## Mips Simulator
+## Twitter Analysis tool
+## C++
 ## About Me
 I am an Applied Mathematics and Computing 3rd year student at University Carlos III de Madrid. I am currently at University of Florida as an exchange student.
 

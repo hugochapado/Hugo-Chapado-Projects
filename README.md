@@ -14,7 +14,7 @@
   </ol>
 </details>
 
-### About Me
+## About Me
 I am an Applied Mathematics and Computing 3rd year student at University Carlos III de Madrid. I am currently at University of Florida as an exchange student.
 
 Design-thinker combining experience, creativity, empathy and rationality to investigate, analyse and execute successful initiatives, programs and solutions in complex, challenging and diverse environments. 

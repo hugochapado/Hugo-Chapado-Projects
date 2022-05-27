@@ -11,7 +11,7 @@
     <li><a href="#mips-simulator">Mips Simulator</a></li>
     <li><a href="#twitter-analysis-tool">Twitter Analysis tool</a></li>
     <li><a href="#c++">C++</a></li>
-    <li><a href="#f1racepredictor">F1 race predictor</a></li>
+    <li><a href="#f1-race-predictor">F1 race predictor</a></li>
   </ol>
 </details>
 

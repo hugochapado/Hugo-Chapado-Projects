@@ -11,6 +11,7 @@
     <li><a href="#mips-simulator">Mips Simulator</a></li>
     <li><a href="#twitter-analysis-tool">Twitter Analysis tool</a></li>
     <li><a href="#c++">C++</a></li>
+    <li><a href="#f1racepredictor">F1 race predictor</a></li>
   </ol>
 </details>
 
@@ -37,6 +38,9 @@ Twitter tool made using data structures to find out how close a specific person 
 
 ## C++
 Directory containing small C++ projects
+
+##F1 race predictor
+Work with data from diferent datasets to see how important is the qualification in F1 on each circuit. 
 
 ## Contact information
 

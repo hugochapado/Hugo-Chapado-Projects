@@ -39,7 +39,7 @@ Twitter tool made using data structures to find out how close a specific person 
 ## C++
 Directory containing small C++ projects
 
-##F1 race predictor
+## F1 race predictor
 Work with data from diferent datasets to see how important is the qualification in F1 on each circuit. 
 
 ## Contact information

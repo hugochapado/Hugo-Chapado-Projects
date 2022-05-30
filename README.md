@@ -44,12 +44,7 @@ Directory containing small C++ projects
 Work with data from diferent datasets to see how important is the qualification in F1 on each circuit. 
 
 ## Language java
-This project consist on builidng a language on java. It is divided into 5 components, each one with its own function.
--Lexer
--Parser
--Interpreter
--Analyzer
--Generator
+This project consist on builidng a language on java. It is divided into 5 components, each one with its own function. Lexer, Parser, Interpreter, Analyzer and Generator
 
 ## Contact information
 

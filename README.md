@@ -12,6 +12,7 @@
     <li><a href="#twitter-analysis-tool">Twitter Analysis tool</a></li>
     <li><a href="#c++">C++</a></li>
     <li><a href="#f1-race-predictor">F1 race predictor</a></li>
+    <li><a href="#language-java">Language java</a></li>
   </ol>
 </details>
 
@@ -41,6 +42,14 @@ Directory containing small C++ projects
 
 ## F1 race predictor
 Work with data from diferent datasets to see how important is the qualification in F1 on each circuit. 
+
+## Language java
+This project consist on builidng a language on java. It is divided into 5 components, each one with its own function.
+-Lexer
+-Parser
+-Interpreter
+-Analyzer
+-Generator
 
 ## Contact information
 

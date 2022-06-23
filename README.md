@@ -54,9 +54,7 @@ EMAILS:
   
 -->   hugochapado@ufl.edu
 
-Phone Numbers:
-
--->   +1 352 888 9626
+Phone Number:
   
 -->   +34 688 92 08 61
  
